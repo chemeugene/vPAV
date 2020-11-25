@@ -197,12 +197,7 @@ public class FileScanner {
 
 		try {
 			URL urlTargetClass;
-			if (RuntimeConfig.getInstance().isTest()) {
-				urlTargetClass = Paths.get("target/test-classes").toUri().toURL();
-			} else {
-				urlTargetClass = Paths.get("target/classes").toUri().toURL();
-			}
-
+			urlTargetClass = Paths.get(RuntimeConfig.getInstance().getScanPath()).toUri().toURL();
 			String path = urlTargetClass.toString();
 			addStringToSootPath(path);
 		} catch (MalformedURLException e) {
@@ -224,8 +219,9 @@ public class FileScanner {
 				}
 			}
 			// retrieve all jars during runtime and pass them to get class files
-			if (Pattern.compile(".*target/classes.*").matcher(entry).find()
-					|| Pattern.compile(".*target/test-classes.*").matcher(entry).find()) {
+			String osClassPath = RuntimeConfig.getInstance().getScanPath().replaceAll("\\\\", "/");
+			String entryPath = entry.replaceAll("\\\\", "/");
+            if (Pattern.compile(".*" + osClassPath + ".*").matcher(entryPath).find()) {
 				addStringToSootPath(entry);
 			}
 
